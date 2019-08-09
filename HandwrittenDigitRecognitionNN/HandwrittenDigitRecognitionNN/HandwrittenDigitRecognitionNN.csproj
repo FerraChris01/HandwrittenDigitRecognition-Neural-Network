@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -68,8 +71,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NN\DataStream.cs" />
     <Compile Include="NN\MyMath.cs" />
-    <Compile Include="NN\NetworkManager.cs" />
     <Compile Include="NN\Neurons\HiddenLNeuron.cs" />
     <Compile Include="NN\Neurons\InputNeuron.cs" />
     <Compile Include="NN\Neurons\Neuron.cs" />
@@ -79,7 +82,7 @@
     <Compile Include="NN\Structure\Layers\Layer.cs" />
     <Compile Include="NN\Structure\Layers\OutputLayer.cs" />
     <Compile Include="NN\Structure\Network.cs" />
-    <Compile Include="NN\Structure\Synapse.cs" />
+    <Compile Include="NN\Structure\Synapsis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -97,6 +100,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

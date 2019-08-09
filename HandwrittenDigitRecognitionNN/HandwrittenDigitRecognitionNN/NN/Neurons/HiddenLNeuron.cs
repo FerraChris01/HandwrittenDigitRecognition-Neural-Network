@@ -8,10 +8,10 @@ namespace HandwrittenDigitRecognitionNN.NN
 {
     class HiddenLNeuron : Neuron
     {
-        private List<Synapse> LeftS;
-        private List<Synapse> RightS;
+        private List<Synapsis> LeftS;
+        private List<Synapsis> RightS;
         public float Bias { get; set; }
-        public void AddSynapsis(Synapse s, bool direction)
+        public void AddSynapsis(Synapsis s, bool direction)
         {
             if (!direction)
                 LeftS.Add(s);
@@ -21,7 +21,7 @@ namespace HandwrittenDigitRecognitionNN.NN
         public void UpdateActivation()
         {
             Activation = 0f;
-            foreach (Synapse s in LeftS)
+            foreach (Synapsis s in LeftS)
                 Activation += s.Left.Activation * s.Weight;
 
             Activation += Bias;

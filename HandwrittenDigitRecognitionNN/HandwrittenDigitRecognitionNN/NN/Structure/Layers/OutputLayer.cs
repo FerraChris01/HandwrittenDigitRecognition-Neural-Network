@@ -9,14 +9,32 @@ namespace HandwrittenDigitRecognitionNN.NN
     class OutputLayer : Layer
     {
         public OutputNeuron[] Neurons { get; set; }
-        private List<Synapse> SRecords;
+        public List<Synapsis> SRecords { get; set; }
+        public List<float> BiasRecords
+        {
+            get { return this.BiasRecords; }
+            set
+            {
+                this.BiasRecords = BiasRecords;
+                SetBiases();
+            }
+        }
         public OutputLayer() { }
         public OutputLayer(int size)
         {
             NeuronNumber = size;
             Neurons = new OutputNeuron[NeuronNumber];
-            SRecords = new List<Synapse>();
+            SRecords = new List<Synapsis>();
+
+            for (int i = 0; i < NeuronNumber; i++)
+                Neurons[i] = new OutputNeuron();
+
             Init();
+        }
+        private void SetBiases()
+        {
+            for (int i = 0; i < Neurons.Length; i++)
+                Neurons[i].Bias = BiasRecords[i];
         }
         private void Init()
         {
@@ -40,7 +58,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             {
                 for (int j = 0; j < hl.Neurons.Length; j++)
                 {
-                    Synapse temp = new Synapse((float)rn.NextDouble(), hl.Neurons[j], Neurons[i]);
+                    Synapsis temp = new Synapsis((float)rn.NextDouble(), hl.Neurons[j], Neurons[i]);
                     hl.Neurons[j].AddSynapsis(temp, true);
                     Neurons[i].AddSynapsis(temp);
                     SRecords.Add(temp);
@@ -49,13 +67,13 @@ namespace HandwrittenDigitRecognitionNN.NN
         }
         public void CreateSynapsisNetwork(HiddenLayer hl)
         {
-            List<Synapse> STemp = SRecords;
+            List<Synapsis> STemp = SRecords;
             int k = 0;
             for (int i = 0; i < Neurons.Length; i++)
             {
                 for (int j = 0; j < hl.Neurons.Length; j++)
                 {
-                    Synapse temp = STemp[k];
+                    Synapsis temp = STemp[k];
                     hl.Neurons[j].AddSynapsis(temp, true);
                     Neurons[i].AddSynapsis(temp);
                     k++;

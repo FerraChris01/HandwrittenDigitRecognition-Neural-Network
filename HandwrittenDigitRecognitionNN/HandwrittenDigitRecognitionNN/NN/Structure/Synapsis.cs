@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace HandwrittenDigitRecognitionNN.NN
 {
-    class Synapse
+    class Synapsis
     {
         public float Weight { get; set; }
         public Neuron Left { get; set; }
         public Neuron Right { get; set; }
 
-        public Synapse()
+        public Synapsis()
         {
         }
-        public Synapse(float weight, Neuron left, Neuron right)
+        public Synapsis(float weight, Neuron left, Neuron right)
         {
             Weight = weight;
             Left = left;
             Right = right;
         }
-        public Synapse(float weight)
+        public Synapsis(float weight)
         {
             Weight = weight;
         }

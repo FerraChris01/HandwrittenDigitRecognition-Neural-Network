@@ -8,17 +8,17 @@ namespace HandwrittenDigitRecognitionNN.NN
 {
     class OutputNeuron : Neuron
     {
-        private List<Synapse> LeftS;
+        private List<Synapsis> LeftS;
         public int RepresentingValue { get; set; }
         public float Bias { get; set; }
-        public void AddSynapsis(Synapse s)
+        public void AddSynapsis(Synapsis s)
         {
             LeftS.Add(s);
         }
         public void UpdateActivation()
         {
             Activation = 0f;
-            foreach (Synapse s in LeftS)
+            foreach (Synapsis s in LeftS)
                 Activation += s.Left.Activation * s.Weight;
 
             Activation += Bias;

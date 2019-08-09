@@ -9,24 +9,39 @@ namespace HandwrittenDigitRecognitionNN.NN
     class HiddenLayer : Layer
     {
         public HiddenLNeuron[] Neurons { get; set; }
-        private List<Synapse> SRecords;
+        public List<Synapsis> SRecords { get; set; }
+        public List<float> BiasRecords
+        {
+            get { return this.BiasRecords; }
+            set
+            {
+                this.BiasRecords = BiasRecords;
+                SetBiases();
+            }
+        }
         public HiddenLayer() { }
         public HiddenLayer(int size)
         {
             NeuronNumber = size;
             Neurons = new HiddenLNeuron[NeuronNumber];
-            SRecords = new List<Synapse>();
+            SRecords = new List<Synapsis>();
+
+            for (int i = 0; i < NeuronNumber; i++)
+                Neurons[i] = new HiddenLNeuron();
+            
             Init();
 
         }
-        private void Init()
+        private void SetBiases()
         {
+            for (int i = 0; i < Neurons.Length; i++)
+                Neurons[i].Bias = BiasRecords[i];
+        }
+        private void Init()
+        {            
             Random rn = new Random();
             for (int i = 0; i < NeuronNumber; i++)
-            {
-                Neurons[i] = new HiddenLNeuron();
-                Neurons[i].Init();
-            }
+                Neurons[i].Init();          
 
 
         }
@@ -37,7 +52,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             {
                 for (int j = 0; j < il.Neurons.Length; j++)
                 {
-                    Synapse temp = new Synapse((float)rn.NextDouble(), il.Neurons[j], Neurons[i]);
+                    Synapsis temp = new Synapsis((float)rn.NextDouble(), il.Neurons[j], Neurons[i]);
                     il.Neurons[j].AddSynapsis(temp);
                     Neurons[i].AddSynapsis(temp, false);
                     SRecords.Add(temp);
@@ -51,7 +66,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             {
                 for (int j = 0; j < hl.Neurons.Length; j++)
                 {
-                    Synapse temp = new Synapse((float)rn.NextDouble(), hl.Neurons[j], Neurons[i]);
+                    Synapsis temp = new Synapsis((float)rn.NextDouble(), hl.Neurons[j], Neurons[i]);
                     hl.Neurons[j].AddSynapsis(temp, true);
                     Neurons[i].AddSynapsis(temp, false);
                     SRecords.Add(temp);
@@ -60,13 +75,13 @@ namespace HandwrittenDigitRecognitionNN.NN
         }
         public void CreateSynapsisNetwork(InputLayer il)
         {
-            List<Synapse> STemp = SRecords;
+            List<Synapsis> STemp = SRecords;
             int k = 0;
             for (int i = 0; i < Neurons.Length; i++)
             {
                 for (int j = 0; j < il.Neurons.Length; j++)
                 {
-                    Synapse temp = STemp[k];
+                    Synapsis temp = STemp[k];
                     il.Neurons[j].AddSynapsis(temp);
                     Neurons[i].AddSynapsis(temp, false);
                     k++;
@@ -75,13 +90,13 @@ namespace HandwrittenDigitRecognitionNN.NN
         }
         public void CreateSynapsisNetwork(HiddenLayer hl)
         {
-            List<Synapse> STemp = SRecords;
+            List<Synapsis> STemp = SRecords;
             int k = 0;
             for (int i = 0; i < Neurons.Length; i++)
             {
                 for (int j = 0; j < hl.Neurons.Length; j++)
                 {
-                    Synapse temp = STemp[k];
+                    Synapsis temp = STemp[k];
                     hl.Neurons[j].AddSynapsis(temp, true);
                     Neurons[i].AddSynapsis(temp, false);
                     k++;

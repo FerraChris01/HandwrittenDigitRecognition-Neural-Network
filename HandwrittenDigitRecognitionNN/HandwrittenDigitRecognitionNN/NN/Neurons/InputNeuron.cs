@@ -8,8 +8,8 @@ namespace HandwrittenDigitRecognitionNN.NN
 {
     class InputNeuron : Neuron
     {
-        private List<Synapse> RightS;
-        public void AddSynapsis(Synapse s)
+        private List<Synapsis> RightS;
+        public void AddSynapsis(Synapsis s)
         {
             RightS.Add(s);
         }
