@@ -81,7 +81,7 @@
     <Compile Include="NN\Structure\Layers\InputLayer.cs" />
     <Compile Include="NN\Structure\Layers\Layer.cs" />
     <Compile Include="NN\Structure\Layers\OutputLayer.cs" />
-    <Compile Include="NN\Structure\Network.cs" />
+    <Compile Include="NN\Network.cs" />
     <Compile Include="NN\Structure\Synapsis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

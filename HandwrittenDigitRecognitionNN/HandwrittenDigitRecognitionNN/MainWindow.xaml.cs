@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HandwrittenDigitRecognitionNN.NN;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,21 @@ namespace HandwrittenDigitRecognitionNN
         public MainWindow()
         {
             InitializeComponent();
+            Network nw = new Network(new List<int> { 784, 16, 16, 10 }, 2.0f);
+
+            float[] inputValues = new float[784];
+            Random rn = new Random();
+            string str = "";
+            for (int i = 0; i < inputValues.Length; i++)
+            {
+                float temp = (float)(rn.Next(100)) / 100.0f;
+                inputValues[i] = temp;
+                str += temp.ToString() + Environment.NewLine;
+            }
+            nw.FeedForward(inputValues);
+
+            DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", nw.DebugActivationsOfLayers());
+            DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", "The network guess is: " + nw.NetworkGuess().ToString());
         }
     }
 }

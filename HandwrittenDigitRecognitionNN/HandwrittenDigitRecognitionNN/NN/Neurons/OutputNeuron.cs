@@ -11,6 +11,17 @@ namespace HandwrittenDigitRecognitionNN.NN
         private List<Synapsis> LeftS;
         public int RepresentingValue { get; set; }
         public float Bias { get; set; }
+        public int Y { get; set; }
+        public float DelCost
+        { 
+            get { return 2 * (Activation - Y) }
+        }
+
+        public OutputNeuron()
+        {
+            Cost = 0;
+            LeftS = new List<Synapsis>();
+        }
         public void AddSynapsis(Synapsis s)
         {
             LeftS.Add(s);

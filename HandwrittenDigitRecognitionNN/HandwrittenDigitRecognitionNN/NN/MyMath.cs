@@ -21,10 +21,11 @@ namespace HandwrittenDigitRecognitionNN.NN
                 return instance;
             }
         }
-        public float Sigmoid(float value)
+        public float Sigmoid(double value)
         {
-            float k = (float)Math.Exp(value);
-            return k / (1.0f + k);
+            double k = Math.Exp(value);
+            float res = (float)(k / (1.0f + k));
+            return (float)(((int)(res * 100)) / 100.0);
         }
     }
 }

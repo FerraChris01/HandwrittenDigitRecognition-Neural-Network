@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandwrittenDigitRecognitionNN"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="549.689" Width="915">
     <Grid>
-        
+        <Border BorderThickness="3" BorderBrush="Black" HorizontalAlignment="Left" Height="224" Width="224" Margin="102,94,0,0" VerticalAlignment="Top">
+            <Canvas Height="224" Width="224"/>
+        </Border>
     </Grid>
 </Window>

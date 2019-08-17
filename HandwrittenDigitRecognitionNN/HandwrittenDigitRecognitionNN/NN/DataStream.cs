@@ -5,35 +5,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Web.Script.Serialization;
 
 namespace HandwrittenDigitRecognitionNN.NN
 {
     class DataStream
     {
-        private readonly string SynapsisFile;
-        private readonly string BiasFile;
-
-        public DataStream()
+        private static DataStream instance;
+        private DataStream() { }
+        public static DataStream Instance
         {
-            this.SynapsisFile = "s_layer";
-            this.BiasFile = "b_layer";
-        }
-        public List<Synapsis> ReadSynapsesOfLayer(int layerIndex)
-        {
-            List<Synapsis> records = new List<Synapsis>();
-            using (StreamReader r = new StreamReader(SynapsisFile + layerIndex + ".json"))
+            get
             {
-                string json = r.ReadToEnd();
-                records = JsonConvert.DeserializeObject<List<Synapsis>>(json);
+                if (instance == null)
+                {
+                    instance = new DataStream();
+                }
+                return instance;
             }
-            return records;
         }
 
-        public List<float> ReadBiasesOfLayer(int layerIndex)
+        public List<float> ReadSynapseWeightsOfLayer(string fileName)
         {
             List<float> records = new List<float>();
-            using (StreamReader r = new StreamReader(BiasFile + layerIndex + ".json"))
+            using (StreamReader r = new StreamReader(fileName))
             {
                 string json = r.ReadToEnd();
                 records = JsonConvert.DeserializeObject<List<float>>(json);
@@ -41,23 +35,40 @@ namespace HandwrittenDigitRecognitionNN.NN
             return records;
         }
 
-        public void WriteSynapsesOfLayer(List<Synapsis> records, int layerIndex)
+        public List<float> ReadBiasesOfLayer(string fileName)
         {
-            using (StreamWriter file = new StreamWriter(SynapsisFile + layerIndex + ".json"))
+            List<float> records = new List<float>();
+            using (StreamReader r = new StreamReader(fileName))
+            {
+                string json = r.ReadToEnd();
+                records = JsonConvert.DeserializeObject<List<float>>(json);
+            }
+            return records;
+        }
+
+        public void WriteSynapseWeightsOfLayer(List<float> weights, string fileName)
+        {
+            using (StreamWriter file = new StreamWriter(fileName))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, weights);
+            }
+        }
+
+        public void WriteBiasesOfLayer(List<float> records, string fileName)
+        {
+            using (StreamWriter file = new StreamWriter(fileName))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, records);
             }
         }
-
-        public void WriteBiasesOfLayer(List<float> records, int layerIndex)
+        public void DebugWriteStringOnFile(string fileName, string txt)
         {
-            using (StreamWriter file = new StreamWriter(BiasFile + layerIndex + ".json"))
+            using (StreamWriter file = new StreamWriter(fileName, true))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, records);
+                file.WriteLine(txt);
             }
         }
-
     }
 }

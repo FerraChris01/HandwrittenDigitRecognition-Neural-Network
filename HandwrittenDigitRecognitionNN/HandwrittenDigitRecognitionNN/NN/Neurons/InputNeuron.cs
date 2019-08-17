@@ -8,7 +8,12 @@ namespace HandwrittenDigitRecognitionNN.NN
 {
     class InputNeuron : Neuron
     {
-        private List<Synapsis> RightS;
+        public List<Synapsis> RightS { get; set; }
+
+        public InputNeuron()
+        {
+            RightS = new List<Synapsis>();
+        }
         public void AddSynapsis(Synapsis s)
         {
             RightS.Add(s);
