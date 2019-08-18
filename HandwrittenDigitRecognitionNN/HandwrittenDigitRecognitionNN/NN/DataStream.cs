@@ -63,6 +63,13 @@ namespace HandwrittenDigitRecognitionNN.NN
                 serializer.Serialize(file, records);
             }
         }
+        public void Learning_WriteRecordOnFile(string fileName, float )
+        {
+            using (StreamWriter file = new StreamWriter(fileName, true))
+            {
+                file.WriteLine(txt);
+            }
+        }
         public void DebugWriteStringOnFile(string fileName, string txt)
         {
             using (StreamWriter file = new StreamWriter(fileName, true))

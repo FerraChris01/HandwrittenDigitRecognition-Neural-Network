@@ -11,7 +11,7 @@ namespace HandwrittenDigitRecognitionNN.NN
         public OutputNeuron[] Neurons { get; set; }
         public List<float> WeightRecords { get; set; }
         public List<float> BiasRecords { get; set; }
-        public float Cost;
+        public float Cost { get; set; }
 
         private string SynapsesFile;
         private string BiasesFile;
@@ -103,7 +103,10 @@ namespace HandwrittenDigitRecognitionNN.NN
         }
         public void BackPropagation()
         {
-
+            foreach (OutputNeuron n in Neurons)
+            {
+                
+            }
         }
         public int BrightestNeuron()
         {

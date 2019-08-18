@@ -27,5 +27,13 @@ namespace HandwrittenDigitRecognitionNN.NN
             float res = (float)(k / (1.0f + k));
             return (float)(((int)(res * 100)) / 100.0);
         }
+        public float DelSigmoid(double value)
+        {
+            return Sigmoid(value) * (1 - Sigmoid(value));
+        }
+        public float Logit(double value)
+        {
+            return (float)Math.Log(value / (1 - value));
+        }
     }
 }

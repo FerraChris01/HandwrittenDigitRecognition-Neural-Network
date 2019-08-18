@@ -14,12 +14,13 @@ namespace HandwrittenDigitRecognitionNN.NN
         public int Y { get; set; }
         public float DelCost
         { 
-            get { return 2 * (Activation - Y) }
+            get { return 2 * (Activation - Y); }
+            set { }
         }
 
         public OutputNeuron()
         {
-            Cost = 0;
+            DelCost = 0;
             LeftS = new List<Synapsis>();
         }
         public void AddSynapsis(Synapsis s)
@@ -39,6 +40,20 @@ namespace HandwrittenDigitRecognitionNN.NN
         {
             Random rn = new Random();
             Bias = (float)rn.NextDouble();
+        }
+        public void BackPropagation(float Cost, int NeuronIndex)
+        {
+            for (int i = 0; i < LeftS.Count; i++)
+            {
+                float Wj = LeftS[i].Left.Activation * MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost;
+                DataStream.Instance.Learning_WriteRecordOnFile("Learning/LWeights/OutputLayer/Neuron" + NeuronIndex + "/W" + i, Wj);
+            }
+            float Bj = MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost;
+
+        }
+        public void NodgeWeights()
+        {
+
         }
     }
 }
