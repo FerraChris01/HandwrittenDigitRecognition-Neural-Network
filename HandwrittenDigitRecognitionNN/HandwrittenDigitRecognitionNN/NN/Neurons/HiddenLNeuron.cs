@@ -10,12 +10,14 @@ namespace HandwrittenDigitRecognitionNN.NN
     {
         public List<Synapsis> LeftS { get; set; }
         public List<Synapsis> RightS { get; set; }
+        public List<float> LBiases { get; set; }
         public float Bias { get; set; }
-        
+
         public HiddenLNeuron()
         {
             LeftS = new List<Synapsis>();
             RightS = new List<Synapsis>();
+            LBiases = new List<float>();
         }
         public void AddSynapsis(Synapsis s, bool direction)
         {
@@ -40,5 +42,30 @@ namespace HandwrittenDigitRecognitionNN.NN
             Activation += Bias;
             Activation = MyMath.Instance.Sigmoid(Activation);
         }
+        public void BackPropagation(float Cost)
+        {
+            foreach (Synapsis s in LeftS)
+                s.LWeights.Add(s.Left.Activation * MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation) * Cost));
+
+
+            LBiases.Add(MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost);
+        }
+        public void NodgeWB(float eta)
+        {
+            NodgeWeights(eta);
+            NodgeBias(eta);
+            LBiases.Clear();
+        }
+        private void NodgeWeights(float eta)
+        {
+            foreach (Synapsis s in LeftS)
+                s.NodgeWeight(eta);
+        }
+        private void NodgeBias(float eta)
+        {
+            float av = LBiases.Average();
+            Bias -= eta * av;
+        }
+
     }
 }

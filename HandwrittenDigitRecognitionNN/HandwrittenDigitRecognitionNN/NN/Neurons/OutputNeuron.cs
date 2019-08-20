@@ -11,17 +11,18 @@ namespace HandwrittenDigitRecognitionNN.NN
         private List<Synapsis> LeftS;
         public int RepresentingValue { get; set; }
         public float Bias { get; set; }
+        public List<float> LBiases { get; set; }
         public int Y { get; set; }
         public float DelCost
-        { 
+        {
             get { return 2 * (Activation - Y); }
             set { }
         }
-
         public OutputNeuron()
         {
             DelCost = 0;
             LeftS = new List<Synapsis>();
+            LBiases = new List<float>();
         }
         public void AddSynapsis(Synapsis s)
         {
@@ -41,19 +42,30 @@ namespace HandwrittenDigitRecognitionNN.NN
             Random rn = new Random();
             Bias = (float)rn.NextDouble();
         }
-        public void BackPropagation(float Cost, int NeuronIndex)
+        public void BackPropagation(float Cost)
         {
-            for (int i = 0; i < LeftS.Count; i++)
-            {
-                float Wj = LeftS[i].Left.Activation * MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost;
-                DataStream.Instance.Learning_WriteRecordOnFile("Learning/LWeights/OutputLayer/Neuron" + NeuronIndex + "/W" + i, Wj);
-            }
-            float Bj = MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost;
+            foreach (Synapsis s in LeftS)
+              s.LWeights.Add(s.Left.Activation* MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation) * Cost));
 
+            LBiases.Add(MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost);
         }
-        public void NodgeWeights()
+        public void NodgeWB(float eta)
         {
-
+            NodgeWeights(eta);
+            NodgeBias(eta);
+            LBiases.Clear();
         }
+        private void NodgeWeights(float eta)
+        {
+            foreach (Synapsis s in LeftS)
+                s.NodgeWeight(eta);
+        }
+        private void NodgeBias(float eta)
+        {
+            float av = LBiases.Average();
+            Bias -= eta * av;
+        }
+
+
     }
 }

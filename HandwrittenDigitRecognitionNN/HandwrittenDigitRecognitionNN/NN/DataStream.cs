@@ -23,8 +23,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                 return instance;
             }
         }
-
-        public List<float> ReadSynapseWeightsOfLayer(string fileName)
+        public List<float> ReadWBFromFile(string fileName)
         {
             List<float> records = new List<float>();
             using (StreamReader r = new StreamReader(fileName))
@@ -35,41 +34,15 @@ namespace HandwrittenDigitRecognitionNN.NN
             return records;
         }
 
-        public List<float> ReadBiasesOfLayer(string fileName)
-        {
-            List<float> records = new List<float>();
-            using (StreamReader r = new StreamReader(fileName))
-            {
-                string json = r.ReadToEnd();
-                records = JsonConvert.DeserializeObject<List<float>>(json);
-            }
-            return records;
-        }
-
-        public void WriteSynapseWeightsOfLayer(List<float> weights, string fileName)
+        public void WriteWBOnFile(List<float> wb, string fileName)
         {
             using (StreamWriter file = new StreamWriter(fileName))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, weights);
+                serializer.Serialize(file, wb);
             }
         }
-
-        public void WriteBiasesOfLayer(List<float> records, string fileName)
-        {
-            using (StreamWriter file = new StreamWriter(fileName))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, records);
-            }
-        }
-        public void Learning_WriteRecordOnFile(string fileName, float )
-        {
-            using (StreamWriter file = new StreamWriter(fileName, true))
-            {
-                file.WriteLine(txt);
-            }
-        }
+       
         public void DebugWriteStringOnFile(string fileName, string txt)
         {
             using (StreamWriter file = new StreamWriter(fileName, true))

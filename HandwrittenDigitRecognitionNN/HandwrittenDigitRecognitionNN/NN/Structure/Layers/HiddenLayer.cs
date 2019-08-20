@@ -27,9 +27,9 @@ namespace HandwrittenDigitRecognitionNN.NN
             for (int i = 0; i < NeuronNumber; i++)
                 Neurons[i] = new HiddenLNeuron();
 
-        
-            WeightRecords = DataStream.Instance.ReadSynapseWeightsOfLayer(SynapsesFile);
-            BiasRecords = DataStream.Instance.ReadBiasesOfLayer(BiasesFile);
+
+            WeightRecords = DataStream.Instance.ReadWBFromFile(SynapsesFile);
+            BiasRecords = DataStream.Instance.ReadWBFromFile(BiasesFile);
             SetBiases();
 
             //Init();
@@ -41,7 +41,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                 Neurons[i].Bias = BiasRecords[i];
         }
         private void Init()
-        {            
+        {
             Random rn = new Random();
             for (int i = 0; i < NeuronNumber; i++)
             {
@@ -49,7 +49,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                 Neurons[i].Bias = temp;
                 BiasRecords.Add(temp);
             }
-            DataStream.Instance.WriteBiasesOfLayer(BiasRecords, BiasesFile);
+            DataStream.Instance.WriteWBOnFile(BiasRecords, BiasesFile);
         }
         public void Init_CreateSynapsisNetwork(InputLayer il)
         {
@@ -63,9 +63,9 @@ namespace HandwrittenDigitRecognitionNN.NN
                     il.Neurons[j].AddSynapsis(temp);
                     Neurons[i].AddSynapsis(temp, false);
                     WeightRecords.Add(weightTemp);
-                }                    
+                }
             }
-            DataStream.Instance.WriteSynapseWeightsOfLayer(WeightRecords, SynapsesFile);
+            DataStream.Instance.WriteWBOnFile(WeightRecords, SynapsesFile);
         }
         public void Init_CreateSynapsisNetwork(HiddenLayer hl)
         {
@@ -81,7 +81,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                     WeightRecords.Add(weightTemp);
                 }
             }
-            DataStream.Instance.WriteSynapseWeightsOfLayer(WeightRecords, SynapsesFile);
+            DataStream.Instance.WriteWBOnFile(WeightRecords, SynapsesFile);
         }
         public void CreateSynapsisNetwork(InputLayer il)
         {
@@ -114,8 +114,8 @@ namespace HandwrittenDigitRecognitionNN.NN
         public void FeedForward()
         {
             //foreach (HiddenLNeuron hn in Neurons)
-              //  hn.UpdateActivation();
-              for (int i = 0; i < Neurons.Length; i++)
+            //  hn.UpdateActivation();
+            for (int i = 0; i < Neurons.Length; i++)
             {
                 DataStream.Instance.DebugWriteStringOnFile("Debug/debugActivations.txt", Environment.NewLine + "Neuron number " + i);
                 Neurons[i].UpdateActivation();
@@ -130,6 +130,15 @@ namespace HandwrittenDigitRecognitionNN.NN
 
             return temp;
         }
-
+        public void BackPropagation(float Cost)
+        {
+            foreach (HiddenLNeuron n in Neurons)
+                n.BackPropagation(Cost);
+        }
+        public void NodgeWB(float Eta)
+        {
+            foreach (HiddenLNeuron n in Neurons)
+                n.NodgeWB(Eta);
+        }
     }
 }

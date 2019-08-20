@@ -21,7 +21,8 @@ namespace HandwrittenDigitRecognitionNN
         public MainWindow()
         {
             InitializeComponent();
-            Network nw = new Network(new List<int> { 784, 16, 16, 10 }, 2.0f);
+            Network nw = new Network(new List<int> { 784, 16, 16, 10 });
+            nw.Eta = 2.0f;
 
             float[] inputValues = new float[784];
             Random rn = new Random();
@@ -32,7 +33,7 @@ namespace HandwrittenDigitRecognitionNN
                 inputValues[i] = temp;
                 str += temp.ToString() + Environment.NewLine;
             }
-            nw.FeedForward(inputValues);
+            nw.FeedForward(inputValues, rn.Next(10));
 
             DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", nw.DebugActivationsOfLayers());
             DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", "The network guess is: " + nw.NetworkGuess().ToString());

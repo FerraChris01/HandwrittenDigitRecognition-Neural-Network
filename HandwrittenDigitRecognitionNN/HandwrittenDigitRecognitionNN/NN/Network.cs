@@ -11,12 +11,11 @@ namespace HandwrittenDigitRecognitionNN.NN
         private InputLayer ILayer;
         private List<HiddenLayer> HLayers;
         private OutputLayer OLayer;
-        private int NumberOfLayers;
-        private float eta;
+        private int NumberOfLayers;        
+        public float Eta { get; set; }
 
-        public Network(List<int> layers, float eta)
+        public Network(List<int> layers)
         {
-            this.eta = eta;
             ILayer = new InputLayer(layers[0]);
             OLayer = new OutputLayer(layers[layers.Count - 1], "Weights/s_outputL.json", "Biases/b_outputL.json");
             HLayers = new List<HiddenLayer>();
@@ -31,6 +30,7 @@ namespace HandwrittenDigitRecognitionNN.NN
 
             //Init_CreateSynapseNetworks();
         }
+
         private void CreateSynapseNetworks()
         {
             HLayers[0].CreateSynapsisNetwork(ILayer);
@@ -53,7 +53,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             } while (i < HLayers.Count - 1) ;
             OLayer.Init_CreateSynapsisNetwork(HLayers[i]);                
         }
-        public void FeedForward(float []inputs)  //needs to be 784
+        public void FeedForward(float []inputs, int solution)  //needs to be 784
         {
             ILayer.Feed(inputs);
 
@@ -67,15 +67,26 @@ namespace HandwrittenDigitRecognitionNN.NN
 
             OLayer.FeedForward();
 
-            BackPropagation();
+            BackPropagation(solution);
         }
         public int NetworkGuess()
         {
             return OLayer.BrightestNeuron();
         }
-        private void BackPropagation()
+        private void BackPropagation(int solution)
         {
+            OLayer.SetY(solution);
+            DataStream.Instance.DebugWriteStringOnFile("debugCost.txt", OLayer.Cost.ToString());
+            OLayer.BackPropagation();
+            foreach (HiddenLayer l in HLayers)
+                l.BackPropagation(OLayer.Cost);
+        }
+        public void NodgeWB()
+        {
+            foreach (HiddenLayer n in HLayers)
+                n.NodgeWB(Eta);
 
+            OLayer.NodgeWB(Eta);
         }
         public void DebugValues()
         {

@@ -29,8 +29,8 @@ namespace HandwrittenDigitRecognitionNN.NN
             for (int i = 0; i < NeuronNumber; i++)
                 Neurons[i] = new OutputNeuron();
 
-            WeightRecords = DataStream.Instance.ReadSynapseWeightsOfLayer(SynapsesFile);
-            BiasRecords = DataStream.Instance.ReadBiasesOfLayer(BiasesFile);
+            WeightRecords = DataStream.Instance.ReadWBFromFile(SynapsesFile);
+            BiasRecords = DataStream.Instance.ReadWBFromFile(BiasesFile);
             SetBiases();
 
             //Init();
@@ -49,7 +49,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                 Neurons[i].Bias = temp;
                 BiasRecords.Add(temp);
             }
-            DataStream.Instance.WriteBiasesOfLayer(BiasRecords, BiasesFile);
+            DataStream.Instance.WriteWBOnFile(BiasRecords, BiasesFile);
         }
         public void OutputsAsDigits(int from, int to)
         {
@@ -71,7 +71,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                     WeightRecords.Add(weightTemp);
                 }
             }
-            DataStream.Instance.WriteSynapseWeightsOfLayer(WeightRecords, SynapsesFile);
+            DataStream.Instance.WriteWBOnFile(WeightRecords, SynapsesFile);
         }
         public void CreateSynapsisNetwork(HiddenLayer hl)
         {
@@ -99,14 +99,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             Cost = 0;
             foreach (OutputNeuron n in Neurons)
                 Cost += n.DelCost;
-                
-        }
-        public void BackPropagation()
-        {
-            foreach (OutputNeuron n in Neurons)
-            {
-                
-            }
+
         }
         public int BrightestNeuron()
         {
@@ -120,7 +113,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                     tempN = on;
                 }
             }
-            return tempN.RepresentingValue;              
+            return tempN.RepresentingValue;
 
         }
 
@@ -142,5 +135,16 @@ namespace HandwrittenDigitRecognitionNN.NN
                     n.Y = 0;
             }
         }
+        public void BackPropagation()
+        {
+            foreach (OutputNeuron n in Neurons)
+                n.BackPropagation(Cost);
+        }
+        public void NodgeWB(float Eta)
+        {
+            foreach (OutputNeuron n in Neurons)
+                n.NodgeWB(Eta);
+        }
+
     }
 }

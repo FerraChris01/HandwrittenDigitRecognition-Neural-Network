@@ -78,6 +78,7 @@
     <Compile Include="NN\Neurons\Neuron.cs" />
     <Compile Include="NN\Neurons\OutputNeuron.cs" />
     <Compile Include="NN\Structure\Layers\HiddenLayer.cs" />
+    <Compile Include="NN\Structure\Layers\HOLayer.cs" />
     <Compile Include="NN\Structure\Layers\InputLayer.cs" />
     <Compile Include="NN\Structure\Layers\Layer.cs" />
     <Compile Include="NN\Structure\Layers\OutputLayer.cs" />
