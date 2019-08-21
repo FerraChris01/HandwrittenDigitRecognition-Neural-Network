@@ -117,8 +117,9 @@ namespace HandwrittenDigitRecognitionNN.NN
             //  hn.UpdateActivation();
             for (int i = 0; i < Neurons.Length; i++)
             {
-                DataStream.Instance.DebugWriteStringOnFile("Debug/debugActivations.txt", Environment.NewLine + "Neuron number " + i);
                 Neurons[i].UpdateActivation();
+                DataStream.Instance.DebugWriteStringOnFile("Debug/debugActivations.txt", Environment.NewLine + "Neuron number " + i);
+                
             }
         }
 
@@ -135,10 +136,20 @@ namespace HandwrittenDigitRecognitionNN.NN
             foreach (HiddenLNeuron n in Neurons)
                 n.BackPropagation(Cost);
         }
-        public void NodgeWB(float Eta)
+        public void NodgeWB(float Eta, string layer)
         {
-            foreach (HiddenLNeuron n in Neurons)
-                n.NodgeWB(Eta);
+            WeightRecords.Clear();
+            BiasRecords.Clear();
+            for (int i = 0; i < NeuronNumber; i++)
+            {
+                Neurons[i].NodgeWB(Eta);
+                for (int j = 0; j < Neurons[i].LeftS.Count; j++)
+                    WeightRecords.Add(Neurons[i].LeftS[j].Weight);
+
+                BiasRecords.Add(Neurons[i].Bias);
+            }
+            DataStream.Instance.WriteWBOnFile(WeightRecords, "Weights/s_" + layer + ".json");
+            DataStream.Instance.WriteWBOnFile(BiasRecords, "Biases/b_" + layer + ".json");
         }
     }
 }

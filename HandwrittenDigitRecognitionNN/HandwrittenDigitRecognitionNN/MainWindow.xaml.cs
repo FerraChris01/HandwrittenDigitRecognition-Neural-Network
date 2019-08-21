@@ -22,21 +22,26 @@ namespace HandwrittenDigitRecognitionNN
         {
             InitializeComponent();
             Network nw = new Network(new List<int> { 784, 16, 16, 10 });
-            nw.Eta = 2.0f;
+            nw.Eta = 3.0f;
 
             float[] inputValues = new float[784];
             Random rn = new Random();
             string str = "";
-            for (int i = 0; i < inputValues.Length; i++)
+            for (int i = 0; i < 10; i++)
             {
-                float temp = (float)(rn.Next(100)) / 100.0f;
-                inputValues[i] = temp;
-                str += temp.ToString() + Environment.NewLine;
-            }
-            nw.FeedForward(inputValues, rn.Next(10));
+                for (int j = 0; j < inputValues.Length; j++)
+                {
+                    float temp = (float)(rn.Next(100)) / 100.0f;
+                    inputValues[j] = temp;
+                    str += temp.ToString() + Environment.NewLine;
+                }
+                nw.FeedForward(inputValues, rn.Next(10));
 
-            DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", nw.DebugActivationsOfLayers());
-            DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", "The network guess is: " + nw.NetworkGuess().ToString());
+                DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", nw.DebugActivationsOfLayers());
+                DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", "The network guess is: " + nw.NetworkGuess().ToString());
+                DataStream.Instance.DebugWriteStringOnFile("Debug/debugCost.txt", nw.Cost.ToString());
+            }
+            nw.NodgeWB();
         }
     }
 }

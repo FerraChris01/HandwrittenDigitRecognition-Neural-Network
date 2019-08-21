@@ -10,7 +10,7 @@ namespace HandwrittenDigitRecognitionNN.NN
     {
         public List<Synapsis> RightS { get; set; }
 
-        public InputNeuron()
+        public InputNeuron() : base()
         {
             RightS = new List<Synapsis>();
         }

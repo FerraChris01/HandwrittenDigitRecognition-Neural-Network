@@ -31,9 +31,5 @@ namespace HandwrittenDigitRecognitionNN.NN
         {
             return Sigmoid(value) * (1 - Sigmoid(value));
         }
-        public float Logit(double value)
-        {
-            return (float)Math.Log(value / (1 - value));
-        }
     }
 }

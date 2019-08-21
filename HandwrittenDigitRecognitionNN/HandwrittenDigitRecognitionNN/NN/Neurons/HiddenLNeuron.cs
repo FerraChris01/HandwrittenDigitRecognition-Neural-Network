@@ -12,9 +12,11 @@ namespace HandwrittenDigitRecognitionNN.NN
         public List<Synapsis> RightS { get; set; }
         public List<float> LBiases { get; set; }
         public float Bias { get; set; }
+        public float Z;
 
-        public HiddenLNeuron()
+        public HiddenLNeuron() : base()
         {
+            Z = 0f;
             LeftS = new List<Synapsis>();
             RightS = new List<Synapsis>();
             LBiases = new List<float>();
@@ -29,6 +31,7 @@ namespace HandwrittenDigitRecognitionNN.NN
         public void UpdateActivation()
         {
             Activation = 0f;
+            Z = 0f;
             //foreach (Synapsis s in LeftS)
             //    Activation += s.Left.Activation * s.Weight;
             string str = "";
@@ -36,19 +39,26 @@ namespace HandwrittenDigitRecognitionNN.NN
             {
                 str += "activation of " + i + " neuron of prev layer: " + LeftS[i].Left.Activation + "---"
                     + " weight of synapse: " + LeftS[i].Weight + Environment.NewLine;
-                Activation += LeftS[i].Left.Activation * LeftS[i].Weight;
+                Z += LeftS[i].Left.Activation * LeftS[i].Weight;
             }
             DataStream.Instance.DebugWriteStringOnFile("debugActivations.txt", str);
-            Activation += Bias;
-            Activation = MyMath.Instance.Sigmoid(Activation);
+            Z += Bias;
+            Activation = MyMath.Instance.Sigmoid(Z);
         }
         public void BackPropagation(float Cost)
         {
+            string str = "BP hidden neuron" + Environment.NewLine;
             foreach (Synapsis s in LeftS)
-                s.LWeights.Add(s.Left.Activation * MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation) * Cost));
-
-
-            LBiases.Add(MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost);
+            { 
+                s.LWeights.Add((float)(s.Left.Activation * MyMath.Instance.DelSigmoid(Z) * Cost));
+                //str += MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)).ToString() + " x " + Cost + " = " +
+                //    ((float)(s.Left.Activation * (float)(MyMath.Instance.DelSigmoid(MyMath.Instance.Logit(Activation)) * Cost))) + Environment.NewLine;
+                str += MyMath.Instance.DelSigmoid(Z).ToString() + " x " + Cost + " = " +
+                    ((float)(s.Left.Activation * (float)(MyMath.Instance.DelSigmoid(Z) * Cost))) + Environment.NewLine;
+            }
+            str += Environment.NewLine + "-----------------------------" + Environment.NewLine;
+            DataStream.Instance.DebugWriteStringOnFile("Debug/debugBP.txt", str);
+            LBiases.Add(MyMath.Instance.DelSigmoid(Z) * Cost);
         }
         public void NodgeWB(float eta)
         {

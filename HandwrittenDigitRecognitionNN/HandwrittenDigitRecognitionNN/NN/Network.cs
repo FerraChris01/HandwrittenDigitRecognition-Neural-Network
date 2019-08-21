@@ -13,6 +13,7 @@ namespace HandwrittenDigitRecognitionNN.NN
         private OutputLayer OLayer;
         private int NumberOfLayers;        
         public float Eta { get; set; }
+        public float Cost { get; set; }
 
         public Network(List<int> layers)
         {
@@ -23,6 +24,7 @@ namespace HandwrittenDigitRecognitionNN.NN
                 HLayers.Add(new HiddenLayer(layers[i], "Weights/s_layer" + i + ".json", "Biases/b_layer" + i + ".json"));
 
             NumberOfLayers = HLayers.Count + 2;
+            Cost = 0;
 
             OLayer.OutputsAsDigits(0, 9);
 
@@ -76,15 +78,26 @@ namespace HandwrittenDigitRecognitionNN.NN
         private void BackPropagation(int solution)
         {
             OLayer.SetY(solution);
-            DataStream.Instance.DebugWriteStringOnFile("debugCost.txt", OLayer.Cost.ToString());
-            OLayer.BackPropagation();
+            Cost = OLayer.UpdateCost();
+            DataStream.Instance.DebugWriteStringOnFile("Debug/debugCost.txt", Cost.ToString());
+            OLayer.BackPropagation(Cost);
             foreach (HiddenLayer l in HLayers)
-                l.BackPropagation(OLayer.Cost);
+                l.BackPropagation(Cost);
         }
         public void NodgeWB()
         {
-            foreach (HiddenLayer n in HLayers)
-                n.NodgeWB(Eta);
+            //backup
+            DataStream.Instance.WriteWBOnFile(OLayer.WeightRecords, "LearningDebug/L_w_outputL.json");
+            DataStream.Instance.WriteWBOnFile(OLayer.BiasRecords, "LearningDebug/L_b_outputL.json");
+            for (int i = 0; i < HLayers.Count; i++)
+            {
+                DataStream.Instance.WriteWBOnFile(HLayers[i].WeightRecords, "LearningDebug/L_w_layer" + (i + 1) + ".json");
+                DataStream.Instance.WriteWBOnFile(HLayers[i].BiasRecords, "LearningDebug/L_b_layer" + (i + 1) + ".json");
+            }
+            //nodge and override           
+
+            for (int i = 0; i < HLayers.Count; i++)
+                HLayers[i].NodgeWB(Eta, "layer" + (i + 1));
 
             OLayer.NodgeWB(Eta);
         }
@@ -100,10 +113,10 @@ namespace HandwrittenDigitRecognitionNN.NN
         public string DebugActivationsOfLayers()
         {
             string str = "";
-            str += "INPUT LAYER" + Environment.NewLine;
+            //str += "INPUT LAYER" + Environment.NewLine;
 
-            foreach (float v in ILayer.DebugActivations())
-                str += v + Environment.NewLine;
+            //foreach (float v in ILayer.DebugActivations())
+            //    str += v + Environment.NewLine;
 
             foreach (HiddenLayer l in HLayers)
             {

@@ -11,7 +11,6 @@ namespace HandwrittenDigitRecognitionNN.NN
         public OutputNeuron[] Neurons { get; set; }
         public List<float> WeightRecords { get; set; }
         public List<float> BiasRecords { get; set; }
-        public float Cost { get; set; }
 
         private string SynapsesFile;
         private string BiasesFile;
@@ -92,14 +91,26 @@ namespace HandwrittenDigitRecognitionNN.NN
             foreach (OutputNeuron on in Neurons)
                 on.UpdateActivation();
 
+            string act = "";
+            for (int i = 0; i < Neurons.Length; i++)
+                act += "Activation of " + " neuron " + i + ": " + Neurons[i].Activation + Environment.NewLine;
+
+            DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputActs.txt", act);
             UpdateCost();
         }
-        private void UpdateCost()
+        public float UpdateCost()
         {
-            Cost = 0;
+            float Cost = 0;
+            string str = "";            
             foreach (OutputNeuron n in Neurons)
+            {
+                str += "Single: " + n.DelCost + Environment.NewLine + "---------------" + Environment.NewLine;
                 Cost += n.DelCost;
+            }
+            str += "-------------------- SINGLE FINISHED -----------------" + Environment.NewLine;
+            DataStream.Instance.DebugWriteStringOnFile("Debug/debugSingleCost.txt", str);    
 
+            return Cost;
         }
         public int BrightestNeuron()
         {
@@ -135,15 +146,25 @@ namespace HandwrittenDigitRecognitionNN.NN
                     n.Y = 0;
             }
         }
-        public void BackPropagation()
+        public void BackPropagation(float Cost)
         {
             foreach (OutputNeuron n in Neurons)
                 n.BackPropagation(Cost);
         }
         public void NodgeWB(float Eta)
         {
-            foreach (OutputNeuron n in Neurons)
-                n.NodgeWB(Eta);
+            WeightRecords.Clear();
+            BiasRecords.Clear();
+            for (int i = 0; i < NeuronNumber; i++)
+            {
+                Neurons[i].NodgeWB(Eta);
+                for (int j = 0; j < Neurons[i].LeftS.Count; j++)
+                    WeightRecords.Add(Neurons[i].LeftS[j].Weight);
+
+                BiasRecords.Add(Neurons[i].Bias);
+            }
+            DataStream.Instance.WriteWBOnFile(WeightRecords, "Weights/s_outputL.json");
+            DataStream.Instance.WriteWBOnFile(BiasRecords, "Biases/b_outputL.json");
         }
 
     }
