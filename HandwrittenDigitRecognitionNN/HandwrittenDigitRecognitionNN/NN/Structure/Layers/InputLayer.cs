@@ -25,14 +25,27 @@ namespace HandwrittenDigitRecognitionNN.NN
         }
         public void Feed(float []inputs)
         {
-            string str = "";
+            //string str = "";
+            
+
             for (int i = 0; i < Neurons.Length; i++)
-            {
+            { 
                 Neurons[i].Activation = inputs[i];
-                str += Neurons[i].Activation + Environment.NewLine;
+                //str += Neurons[i].Activation + Environment.NewLine;
             }
-            str += "*******************INPUT LAYER ACTIVATION FEED***********************";
-            DataStream.Instance.DebugWriteStringOnFile("Debug/debug_actAndWeights.json", str);
+            //str += "*******************INPUT LAYER ACTIVATION FEED***********************";
+            //DataStream.Instance.DebugWriteStringOnFile("Debug/debug_actAndWeights.json", str);
+            int x = 0;
+            for (int j = 0; j < 28; j++)
+            {
+                for (int k = 0; k < 28; k++)
+                {
+                    Console.Write(Neurons[x].Activation != 0 ? (Neurons[x].Activation == 1 ? "O" : "-") : " ");
+                    x++;
+                }
+
+                Console.WriteLine();
+            }
         }
         public List<float> DebugActivations()
         {

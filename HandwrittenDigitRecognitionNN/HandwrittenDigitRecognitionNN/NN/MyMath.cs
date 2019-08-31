@@ -21,11 +21,27 @@ namespace HandwrittenDigitRecognitionNN.NN
                 return instance;
             }
         }
+        public float ReLU(float value)
+        {
+            float ret = 0f;
+            if (value >= 0)
+                ret = value;
+
+            return ret;
+        }
+        public float DelRelu(float value)
+        {
+            float ret = 0f;
+            if (value >= 0)
+                ret = 1;
+
+            return ret;
+        }
         public float Sigmoid(double value)
         {
             double k = Math.Exp(value);
-            float res = (float)(k / (1.0f + k));
-            return (float)(((int)(res * 100)) / 100.0);
+            double res = k / (1.0f + k);
+            return (float)Math.Round(res, 2);
         }
         public float DelSigmoid(double value)
         {

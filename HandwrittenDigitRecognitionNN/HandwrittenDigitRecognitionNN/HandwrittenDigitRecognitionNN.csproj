@@ -39,6 +39,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -65,14 +67,22 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI manager\CanvasManager.cs" />
+    <Compile Include="GUI manager\HWImage.cs" />
+    <Compile Include="GUI manager\WritingSpace.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MNISTconverter\BinaryReaderMSB.cs" />
+    <Compile Include="MNISTconverter\LabeledImage.cs" />
+    <Compile Include="MNISTconverter\MNISTmanager.cs" />
     <Compile Include="NN\DataStream.cs" />
+    <Compile Include="MNISTconverter\FileReaderMNIST.cs" />
     <Compile Include="NN\MyMath.cs" />
+    <Compile Include="NN\NetworkManager.cs" />
     <Compile Include="NN\Neurons\HiddenLNeuron.cs" />
     <Compile Include="NN\Neurons\InputNeuron.cs" />
     <Compile Include="NN\Neurons\Neuron.cs" />

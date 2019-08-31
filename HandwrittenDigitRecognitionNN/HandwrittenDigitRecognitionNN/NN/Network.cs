@@ -14,75 +14,78 @@ namespace HandwrittenDigitRecognitionNN.NN
         private int NumberOfLayers;        
         public float Eta { get; set; }
         public float Cost { get; set; }
+        public float DelCost { get; set; }
 
-        public Network(List<int> layers)
+        public Network(List<int> layers, bool init)
         {
             ILayer = new InputLayer(layers[0]);
-            OLayer = new OutputLayer(layers[layers.Count - 1], "Weights/s_outputL.json", "Biases/b_outputL.json");
+            OLayer = new OutputLayer(layers[layers.Count - 1], "Weights/s_outputL.json", "Biases/b_outputL.json", init);
             HLayers = new List<HiddenLayer>();
             for (int i = 1; i < layers.Count - 1; i++)
-                HLayers.Add(new HiddenLayer(layers[i], "Weights/s_layer" + i + ".json", "Biases/b_layer" + i + ".json"));
+                HLayers.Add(new HiddenLayer(layers[i], "Weights/s_layer" + i + ".json", "Biases/b_layer" + i + ".json", init));
 
             NumberOfLayers = HLayers.Count + 2;
             Cost = 0;
+            DelCost = 0;
 
             OLayer.OutputsAsDigits(0, 9);
 
-            CreateSynapseNetworks();
+            if (init)
+                Init_CreateSynapseNetworks();
+            else
+                CreateSynapseNetworks();
 
-            //Init_CreateSynapseNetworks();
         }
 
         private void CreateSynapseNetworks()
         {
             HLayers[0].CreateSynapsisNetwork(ILayer);
             int i = 0;
-            do
-            {
-                i++;
-                HLayers[i].CreateSynapsisNetwork(HLayers[i - 1]);
-            } while (i < HLayers.Count - 1);
+            while (i < HLayers.Count - 1)
+                HLayers[++i].CreateSynapsisNetwork(HLayers[i - 1]);
+
             OLayer.CreateSynapsisNetwork(HLayers[i]);
         }
         private void Init_CreateSynapseNetworks()
         {
             HLayers[0].Init_CreateSynapsisNetwork(ILayer);
             int i = 0;
-            do
-            {
-                i++;
-                HLayers[i].Init_CreateSynapsisNetwork(HLayers[i - 1]);
-            } while (i < HLayers.Count - 1) ;
+            while (i < HLayers.Count - 1)
+                HLayers[++i].Init_CreateSynapsisNetwork(HLayers[i - 1]);       
+                
             OLayer.Init_CreateSynapsisNetwork(HLayers[i]);                
         }
         public void FeedForward(float []inputs, int solution)  //needs to be 784
         {
             ILayer.Feed(inputs);
 
-            //foreach (HiddenLayer hl in HLayers)
-            //   hl.FeedForward();
-            for (int i = 0; i < HLayers.Count; i++)
-            {
-                DataStream.Instance.DebugWriteStringOnFile("Debug/debugActivations.txt", Environment.NewLine + "Hidden layer number " + i);
-                HLayers[i].FeedForward();
-            }
+            foreach (HiddenLayer hl in HLayers)
+               hl.FeedForward();
+            //for (int i = 0; i < HLayers.Count; i++)
+            //{
+            //    DataStream.Instance.DebugWriteStringOnFile("Debug/debugActivations.txt", Environment.NewLine + "Hidden layer number " + i);
+            //    HLayers[i].FeedForward();
+            //}
 
             OLayer.FeedForward();
 
-            BackPropagation(solution);
+            SetSolution(solution);
         }
         public int NetworkGuess()
         {
             return OLayer.BrightestNeuron();
         }
-        private void BackPropagation(int solution)
+        private void SetSolution(int solution)
         {
             OLayer.SetY(solution);
-            Cost = OLayer.UpdateCost();
-            DataStream.Instance.DebugWriteStringOnFile("Debug/debugCost.txt", Cost.ToString());
-            OLayer.BackPropagation(Cost);
-            foreach (HiddenLayer l in HLayers)
-                l.BackPropagation(Cost);
+            DelCost = OLayer.UpdateDelCost();
+            Cost = OLayer.UpdateCost();            
+        }
+        public void BackPropagation()
+        {            
+            OLayer.BackPropagation();
+            for (int i = HLayers.Count - 1; i >= 0; i--)
+                HLayers[i].BackPropagation();
         }
         public void NodgeWB()
         {
@@ -96,28 +99,22 @@ namespace HandwrittenDigitRecognitionNN.NN
             }
             //nodge and override           
 
-            for (int i = 0; i < HLayers.Count; i++)
-                HLayers[i].NodgeWB(Eta, "layer" + (i + 1));
-
             OLayer.NodgeWB(Eta);
+            for (int i = HLayers.Count - 1; i >= 0; i--)
+                HLayers[i].NodgeWB(Eta, "layer" + (i + 1));           
         }
-        public void DebugValues()
+        public string DebugValues()
         {
             string temp = "";
             foreach (float n in OLayer.DebugActivations())
                 temp += n + Environment.NewLine;
 
             temp += "The network guess is: " + OLayer.BrightestNeuron();
-            DataStream.Instance.DebugWriteStringOnFile("Debug/debug.txt", temp);
+            return temp;
         }
         public string DebugActivationsOfLayers()
         {
             string str = "";
-            //str += "INPUT LAYER" + Environment.NewLine;
-
-            //foreach (float v in ILayer.DebugActivations())
-            //    str += v + Environment.NewLine;
-
             foreach (HiddenLayer l in HLayers)
             {
                 str += "HIDDEN LAYER" + Environment.NewLine;

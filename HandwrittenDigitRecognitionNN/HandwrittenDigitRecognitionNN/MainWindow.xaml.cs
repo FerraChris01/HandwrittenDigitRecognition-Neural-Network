@@ -18,30 +18,39 @@ namespace HandwrittenDigitRecognitionNN
 {
     public partial class MainWindow : Window
     {
+        private NetworkManager NM;
+        private int mnistIndex;
         public MainWindow()
         {
             InitializeComponent();
-            Network nw = new Network(new List<int> { 784, 16, 16, 10 });
-            nw.Eta = 3.0f;
+            NM = new NetworkManager(1.0f, 300, 100, 0);
+            //NM = new NetworkManager(0);
+            mnistIndex = 0;
+            SwitchToImage();
 
-            float[] inputValues = new float[784];
-            Random rn = new Random();
-            string str = "";
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < inputValues.Length; j++)
-                {
-                    float temp = (float)(rn.Next(100)) / 100.0f;
-                    inputValues[j] = temp;
-                    str += temp.ToString() + Environment.NewLine;
-                }
-                nw.FeedForward(inputValues, rn.Next(10));
+        }
+        private void SwitchToImage()
+        {
+            index.Text = mnistIndex.ToString();
+            mnistImage.Source = NM.DebugReadSample(mnistIndex).Image;
+            solution.Content = NM.DebugReadSample(mnistIndex).Label;
+        }
+        private void next_Click(object sender, RoutedEventArgs e)
+        {
+            mnistIndex++;
+            SwitchToImage();
+        }
 
-                DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", nw.DebugActivationsOfLayers());
-                DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputL.txt", "The network guess is: " + nw.NetworkGuess().ToString());
-                DataStream.Instance.DebugWriteStringOnFile("Debug/debugCost.txt", nw.Cost.ToString());
-            }
-            nw.NodgeWB();
+        private void previous_Click(object sender, RoutedEventArgs e)
+        {
+            mnistIndex--;
+            SwitchToImage();
+        }
+
+        private void index_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            mnistIndex = Int32.Parse(index.Text);
+            SwitchToImage();
         }
     }
 }

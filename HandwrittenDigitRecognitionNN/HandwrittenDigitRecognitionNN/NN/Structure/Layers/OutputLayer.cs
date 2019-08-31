@@ -16,7 +16,7 @@ namespace HandwrittenDigitRecognitionNN.NN
         private string BiasesFile;
 
         public OutputLayer() { }
-        public OutputLayer(int size, string SynapsesFile, string BiasesFile)
+        public OutputLayer(int size, string SynapsesFile, string BiasesFile, bool init)
         {
             NeuronNumber = size;
             this.SynapsesFile = SynapsesFile;
@@ -28,11 +28,14 @@ namespace HandwrittenDigitRecognitionNN.NN
             for (int i = 0; i < NeuronNumber; i++)
                 Neurons[i] = new OutputNeuron();
 
-            WeightRecords = DataStream.Instance.ReadWBFromFile(SynapsesFile);
-            BiasRecords = DataStream.Instance.ReadWBFromFile(BiasesFile);
-            SetBiases();
-
-            //Init();
+            if (init)
+                Init();            
+            else
+            { 
+                WeightRecords = DataStream.Instance.ReadWBFromFile(SynapsesFile);
+                BiasRecords = DataStream.Instance.ReadWBFromFile(BiasesFile);
+                SetBiases();
+            }                      
         }
         private void SetBiases()
         {
@@ -44,7 +47,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             Random rn = new Random();
             for (int i = 0; i < NeuronNumber; i++)
             {
-                float temp = rn.Next(-20, 20);
+                float temp = ((float)rn.Next(-100, 100)) / 10.0f;
                 Neurons[i].Bias = temp;
                 BiasRecords.Add(temp);
             }
@@ -58,12 +61,13 @@ namespace HandwrittenDigitRecognitionNN.NN
         }
         public void Init_CreateSynapsisNetwork(HiddenLayer hl)
         {
+            Init();
             Random rn = new Random();
             for (int i = 0; i < Neurons.Length; i++)
             {
                 for (int j = 0; j < hl.Neurons.Length; j++)
                 {
-                    float weightTemp = ((float)rn.Next(-200, 200)) / 10.0f;
+                    float weightTemp = ((float)rn.Next(-10, 10)) / 10.0f;
                     Synapsis temp = new Synapsis(weightTemp, hl.Neurons[j], Neurons[i]);
                     hl.Neurons[j].AddSynapsis(temp, true);
                     Neurons[i].AddSynapsis(temp);
@@ -73,7 +77,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             DataStream.Instance.WriteWBOnFile(WeightRecords, SynapsesFile);
         }
         public void CreateSynapsisNetwork(HiddenLayer hl)
-        {
+        {            
             int k = 0;
             for (int i = 0; i < Neurons.Length; i++)
             {
@@ -88,28 +92,38 @@ namespace HandwrittenDigitRecognitionNN.NN
         }
         public void FeedForward()
         {
+            //DataStream.Instance.DebugWriteStringOnFile("Debug/OLacts.txt", "OUTPUT LAYER");
             foreach (OutputNeuron on in Neurons)
                 on.UpdateActivation();
 
-            string act = "";
-            for (int i = 0; i < Neurons.Length; i++)
-                act += "Activation of " + " neuron " + i + ": " + Neurons[i].Activation + Environment.NewLine;
+            //string act = "";
+            //for (int i = 0; i < Neurons.Length; i++)
+            //    act += "Activation of " + " neuron " + i + ": " + Neurons[i].Activation + Environment.NewLine;
 
-            DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputActs.txt", act);
-            UpdateCost();
+            //DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputActs.txt", act);
+        }
+        public float UpdateDelCost()
+        {
+            float DelCost = 0;
+            string str = "";            
+            foreach (OutputNeuron n in Neurons)
+            {
+                //str += "Single: " + n.DelCost + Environment.NewLine + "---------------" + Environment.NewLine;
+                DelCost += n.DelCost;
+            }
+            //str += "-------------------- SINGLE FINISHED -----------------" + Environment.NewLine;
+            //DataStream.Instance.DebugWriteStringOnFile("Debug/debugSingleCost.txt", str);    
+
+            DataStream.Instance.DebugWriteStringOnFile("Debug/DelCost.txt", DelCost.ToString());
+            return DelCost;
         }
         public float UpdateCost()
         {
             float Cost = 0;
-            string str = "";            
-            foreach (OutputNeuron n in Neurons)
-            {
-                str += "Single: " + n.DelCost + Environment.NewLine + "---------------" + Environment.NewLine;
-                Cost += n.DelCost;
-            }
-            str += "-------------------- SINGLE FINISHED -----------------" + Environment.NewLine;
-            DataStream.Instance.DebugWriteStringOnFile("Debug/debugSingleCost.txt", str);    
+            foreach (OutputNeuron o in Neurons)
+                Cost += o.Cost;
 
+            DataStream.Instance.DebugWriteStringOnFile("Debug/Cost.txt", Cost.ToString());
             return Cost;
         }
         public int BrightestNeuron()
@@ -146,10 +160,10 @@ namespace HandwrittenDigitRecognitionNN.NN
                     n.Y = 0;
             }
         }
-        public void BackPropagation(float Cost)
+        public void BackPropagation()
         {
             foreach (OutputNeuron n in Neurons)
-                n.BackPropagation(Cost);
+                n.BackPropagation();
         }
         public void NodgeWB(float Eta)
         {

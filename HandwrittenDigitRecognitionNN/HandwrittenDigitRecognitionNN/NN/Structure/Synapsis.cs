@@ -30,5 +30,9 @@ namespace HandwrittenDigitRecognitionNN.NN
             Weight -= eta * av;
             LWeights.Clear();
         }
+        public void AddLearningWeight(float weight)
+        {
+            LWeights.Add(weight);
+        }
     }
 }
