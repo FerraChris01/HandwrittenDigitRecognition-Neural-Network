@@ -20,7 +20,7 @@ namespace HandwrittenDigitRecognitionNN
         {            
             this.NEpochs = NEpochs;
             this.EpochSize = EpochSize;
-            NN = new Network(new List<int> { 784, 16, 16, 10 }, true);
+            NN = new Network(new List<int> { 784, 30, 10 }, true);
             NN.Eta = Eta;
 
             MM = new MNISTmanager("train-labels-idx1-ubyte.gz", "train-images-idx3-ubyte.gz", StartIndex);
@@ -29,7 +29,7 @@ namespace HandwrittenDigitRecognitionNN
         public NetworkManager(int StartIndex)
         {
             GuessedImages = 0;
-            NN = new Network(new List<int> { 784, 16, 16, 10 }, false);
+            NN = new Network(new List<int> { 784, 30, 10 }, false);
             MM = new MNISTmanager("t10k-labels-idx1-ubyte.gz", "t10k-images-idx3-ubyte.gz", StartIndex);
             ValidateNN();
         }

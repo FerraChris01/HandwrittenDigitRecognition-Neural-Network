@@ -34,5 +34,6 @@ namespace HandwrittenDigitRecognitionNN.NN
         {
             LWeights.Add(weight);
         }
+
     }
 }

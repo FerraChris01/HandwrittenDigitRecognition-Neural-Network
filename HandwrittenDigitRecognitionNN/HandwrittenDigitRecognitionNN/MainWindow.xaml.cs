@@ -23,7 +23,7 @@ namespace HandwrittenDigitRecognitionNN
         public MainWindow()
         {
             InitializeComponent();
-            NM = new NetworkManager(1.0f, 300, 100, 0);
+            NM = new NetworkManager(3f, 300, 100, 0);
             //NM = new NetworkManager(0);
             mnistIndex = 0;
             SwitchToImage();

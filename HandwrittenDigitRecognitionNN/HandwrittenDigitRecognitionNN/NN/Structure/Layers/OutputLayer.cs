@@ -102,21 +102,6 @@ namespace HandwrittenDigitRecognitionNN.NN
 
             //DataStream.Instance.DebugWriteStringOnFile("Debug/debugOutputActs.txt", act);
         }
-        public float UpdateDelCost()
-        {
-            float DelCost = 0;
-            string str = "";            
-            foreach (OutputNeuron n in Neurons)
-            {
-                //str += "Single: " + n.DelCost + Environment.NewLine + "---------------" + Environment.NewLine;
-                DelCost += n.DelCost;
-            }
-            //str += "-------------------- SINGLE FINISHED -----------------" + Environment.NewLine;
-            //DataStream.Instance.DebugWriteStringOnFile("Debug/debugSingleCost.txt", str);    
-
-            DataStream.Instance.DebugWriteStringOnFile("Debug/DelCost.txt", DelCost.ToString());
-            return DelCost;
-        }
         public float UpdateCost()
         {
             float Cost = 0;

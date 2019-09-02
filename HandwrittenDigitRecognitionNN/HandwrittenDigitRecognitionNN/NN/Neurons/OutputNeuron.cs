@@ -16,7 +16,7 @@ namespace HandwrittenDigitRecognitionNN.NN
         public int Y { get; set; }
         public float DelCost
         {
-            get { return 2 * (Activation - Y); }
+            get { return -(Y - Activation); }
             set { }
         }
         public float Cost
@@ -63,15 +63,19 @@ namespace HandwrittenDigitRecognitionNN.NN
             Random rn = new Random();
             Bias = ((float)rn.Next(-100, 100)) / 10.0f;
         }
-        public void BackPropagation(float cost)
+        public void BackPropagation()
         {
             //string str = "BP output neuron" + Environment.NewLine;
+            //foreach (Synapsis s in LeftS)
+            //{
+            //    //s.AddLearningWeight((float)(s.Left.Activation * MyMath.Instance.DelSigmoid(Z) * cost));
+            //    s.AddLearningWeight((float)(s.Left.Activation * MyMath.Instance.DelSigmoid(Z) * DelCost));
+            //}
+            //LBiases.Add(MyMath.Instance.DelSigmoid(Z) * DelCost);
             foreach (Synapsis s in LeftS)
-            {
-                //s.AddLearningWeight((float)(s.Left.Activation * MyMath.Instance.DelSigmoid(Z) * cost));
-                s.AddLearningWeight((float)(s.Left.Activation * MyMath.Instance.DelSigmoid(Z) * cost));
-            }
-            LBiases.Add(MyMath.Instance.DelSigmoid(Z) * cost);
+                s.AddLearningWeight(s.Left.Activation * MyMath.Instance.DelSigmoid(Z) * DelCost);
+            
+            LBiases.Add(MyMath.Instance.DelSigmoid(Z) * DelCost);
         }
         public void NodgeWB(float eta)
         {

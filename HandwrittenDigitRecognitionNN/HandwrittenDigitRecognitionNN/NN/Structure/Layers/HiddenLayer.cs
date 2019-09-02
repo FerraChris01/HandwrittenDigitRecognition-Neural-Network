@@ -139,10 +139,10 @@ namespace HandwrittenDigitRecognitionNN.NN
 
             return temp;
         }
-        public void BackPropagation(float Cost)
+        public void BackPropagation()
         {
             foreach (HiddenLNeuron n in Neurons)
-                n.BackPropagation(Cost);
+                n.BackPropagation();
         }
         public void NodgeWB(float Eta, string layer)
         {

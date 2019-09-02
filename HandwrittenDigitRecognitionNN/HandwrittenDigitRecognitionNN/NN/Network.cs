@@ -14,7 +14,6 @@ namespace HandwrittenDigitRecognitionNN.NN
         private int NumberOfLayers;        
         public float Eta { get; set; }
         public float Cost { get; set; }
-        public float DelCost { get; set; }
 
         public Network(List<int> layers, bool init)
         {
@@ -26,7 +25,6 @@ namespace HandwrittenDigitRecognitionNN.NN
 
             NumberOfLayers = HLayers.Count + 2;
             Cost = 0;
-            DelCost = 0;
 
             OLayer.OutputsAsDigits(0, 9);
 
@@ -78,7 +76,6 @@ namespace HandwrittenDigitRecognitionNN.NN
         private void SetSolution(int solution)
         {
             OLayer.SetY(solution);
-            DelCost = OLayer.UpdateDelCost();
             Cost = OLayer.UpdateCost();            
         }
         public void BackPropagation()
