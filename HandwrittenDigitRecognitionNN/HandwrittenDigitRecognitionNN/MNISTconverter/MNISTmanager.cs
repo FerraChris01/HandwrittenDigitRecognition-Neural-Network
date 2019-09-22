@@ -18,7 +18,12 @@ namespace HandwrittenDigitRecognitionNN
             ClusterImageIndex = startIndex;
             ClusterLabelIndex = startIndex;
             data = Shuffle(FileReaderMNIST.LoadImagesAndLables(LPath, IPath).ToList());
-        }      
+        }     
+        public void ResetClusters()
+        {
+            ClusterImageIndex = 0;
+            ClusterLabelIndex = 0;
+        }
         public List<LabeledImage> ReadLabeledImages(int amount)
         {
             List<HWImage> imagesTemp = GetPixelValues(amount);

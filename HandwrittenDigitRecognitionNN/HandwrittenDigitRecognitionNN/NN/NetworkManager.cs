@@ -11,16 +11,18 @@ namespace HandwrittenDigitRecognitionNN
     {
         private Network NN;
         private int NEpochs;
-        private int EpochSize;
+        private int NBatches;
+        private int MiniBatchSize;
         public List<LabeledImage> MnistImages { get; set; }
         private MNISTmanager MM;
         private int GuessedImages;
          
-        public NetworkManager(float Eta, int NEpochs, int EpochSize, int StartIndex)
-        {            
+        public NetworkManager(float Eta, int NEpochs, int NBatches, int MiniBachSize, int StartIndex)
+        {
             this.NEpochs = NEpochs;
-            this.EpochSize = EpochSize;
-            NN = new Network(new List<int> { 784, 30, 10 }, true);
+            this.NBatches = NBatches;
+            this.MiniBatchSize = MiniBachSize;
+            NN = new Network(new List<int> { 784, 200, 10 }, true);
             NN.Eta = Eta;
 
             MM = new MNISTmanager("train-labels-idx1-ubyte.gz", "train-images-idx3-ubyte.gz", StartIndex);
@@ -29,28 +31,36 @@ namespace HandwrittenDigitRecognitionNN
         public NetworkManager(int StartIndex)
         {
             GuessedImages = 0;
-            NN = new Network(new List<int> { 784, 30, 10 }, false);
+            NN = new Network(new List<int> { 784, 200, 10 }, false);
             MM = new MNISTmanager("t10k-labels-idx1-ubyte.gz", "t10k-images-idx3-ubyte.gz", StartIndex);
             ValidateNN();
         }
         private void TrainTheNetwork()
         {
-            for (int i = 0; i < NEpochs; i++)
+            for (int j = 0; j < NEpochs; j++)
             {
-                DataStream.Instance.DebugWriteStringOnFile("Debug/Epoch.txt", i.ToString());                
-                MnistImages = MM.ReadLabeledImages(EpochSize);
-                foreach (LabeledImage l in MnistImages)
+                for (int i = 0; i < NBatches; i++)
                 {
-                    NN.FeedForward(l.PixelValues, l.Label);
+                    DataStream.Instance.DebugWriteStringOnFile("Debug/Batch.txt", i.ToString());
+                    MnistImages = MM.ReadLabeledImages(MiniBatchSize);
+                    foreach (LabeledImage l in MnistImages)
+                    {
+                        NN.FeedForward(l.PixelValues, l.Label);
 
-                    DataStream.Instance.DebugWriteStringOnFile("Debug/activations.txt",
-                        NN.DebugActivationsOfLayers() + Environment.NewLine + "----------------------------" + 
-                        Environment.NewLine);
-                    
-                    NN.BackPropagation();                    
+                        DataStream.Instance.DebugWriteStringOnFile("Debug/activations.txt",
+                            NN.DebugActivationsOfLayers() + Environment.NewLine + "----------------------------" +
+                            Environment.NewLine);
+
+                        NN.BackPropagation();
+                    }
+                    DataStream.Instance.DebugWriteStringOnFile("Debug/Cost.txt", NN.Costs.Average().ToString());
+                    NN.Costs.Clear();
+                    NN.NodgeWB();
                 }
-                NN.NodgeWB();
+                MM.ResetClusters();
+                DataStream.Instance.DebugWriteStringOnFile("Debug/Epoch.txt", "Epoch " + (j + 1) + " finished" + Environment.NewLine);
             }
+
         }
         private void ValidateNN()
         {

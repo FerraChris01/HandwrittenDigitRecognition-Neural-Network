@@ -47,7 +47,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             Random rn = new Random();
             for (int i = 0; i < NeuronNumber; i++)
             {
-                float temp = ((float)rn.Next(-100, 100)) / 10.0f;
+                float temp = 1; // ((float)rn.Next(-100, 100)) / 10.0f;
                 Neurons[i].Bias = temp;
                 BiasRecords.Add(temp);
             }
@@ -108,7 +108,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             foreach (OutputNeuron o in Neurons)
                 Cost += o.Cost;
 
-            DataStream.Instance.DebugWriteStringOnFile("Debug/Cost.txt", Cost.ToString());
+            //DataStream.Instance.DebugWriteStringOnFile("Debug/Cost.txt", Cost.ToString());
             return Cost;
         }
         public int BrightestNeuron()

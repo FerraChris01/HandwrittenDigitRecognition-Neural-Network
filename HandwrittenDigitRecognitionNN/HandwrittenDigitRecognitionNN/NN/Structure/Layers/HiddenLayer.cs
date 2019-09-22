@@ -53,7 +53,7 @@ namespace HandwrittenDigitRecognitionNN.NN
             Random rn = new Random();
             for (int i = 0; i < NeuronNumber; i++)
             {
-                float temp = ((float)rn.Next(-100, 100)) / 10.0f;
+                float temp = 1; // ((float)rn.Next(-100, 100)) / 10.0f;
                 Neurons[i].Bias = temp;
                 BiasRecords.Add(temp);
             }

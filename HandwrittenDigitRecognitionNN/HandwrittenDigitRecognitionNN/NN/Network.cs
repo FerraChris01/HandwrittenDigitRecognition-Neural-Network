@@ -14,6 +14,7 @@ namespace HandwrittenDigitRecognitionNN.NN
         private int NumberOfLayers;        
         public float Eta { get; set; }
         public float Cost { get; set; }
+        public List<float> Costs { get; set; }
 
         public Network(List<int> layers, bool init)
         {
@@ -32,6 +33,8 @@ namespace HandwrittenDigitRecognitionNN.NN
                 Init_CreateSynapseNetworks();
             else
                 CreateSynapseNetworks();
+
+            Costs = new List<float>();
 
         }
 
@@ -76,7 +79,8 @@ namespace HandwrittenDigitRecognitionNN.NN
         private void SetSolution(int solution)
         {
             OLayer.SetY(solution);
-            Cost = OLayer.UpdateCost();            
+            //Cost = OLayer.UpdateCost();   
+            Costs.Add(OLayer.UpdateCost());
         }
         public void BackPropagation()
         {            

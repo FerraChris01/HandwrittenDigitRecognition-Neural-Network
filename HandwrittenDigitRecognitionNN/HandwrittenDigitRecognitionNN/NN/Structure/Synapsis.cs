@@ -11,9 +11,9 @@ namespace HandwrittenDigitRecognitionNN.NN
         public float Weight { get; set; }
         public List<float> LWeights { get; set; }
         public Neuron Left { get; set; }
-        public Neuron Right { get; set; }
+        public ComplexNeuron Right { get; set; }
 
-        public Synapsis(float weight, Neuron left, Neuron right)
+        public Synapsis(float weight, Neuron left, ComplexNeuron right)
         {
             Weight = weight;
             Left = left;

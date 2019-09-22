@@ -83,10 +83,11 @@
     <Compile Include="MNISTconverter\FileReaderMNIST.cs" />
     <Compile Include="NN\MyMath.cs" />
     <Compile Include="NN\NetworkManager.cs" />
-    <Compile Include="NN\Neurons\HiddenLNeuron.cs" />
+    <Compile Include="NN\Neurons\ComplexNeuron\ComplexNeuron.cs" />
+    <Compile Include="NN\Neurons\ComplexNeuron\HiddenLNeuron.cs" />
     <Compile Include="NN\Neurons\InputNeuron.cs" />
     <Compile Include="NN\Neurons\Neuron.cs" />
-    <Compile Include="NN\Neurons\OutputNeuron.cs" />
+    <Compile Include="NN\Neurons\ComplexNeuron\OutputNeuron.cs" />
     <Compile Include="NN\Structure\Layers\HiddenLayer.cs" />
     <Compile Include="NN\Structure\Layers\InputLayer.cs" />
     <Compile Include="NN\Structure\Layers\Layer.cs" />
